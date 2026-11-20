@@ -1,0 +1,39 @@
+# ============================================================================
+# Albus - Staging Configuration
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Application Configuration
+# ----------------------------------------------------------------------------
+
+[application]
+name = "Albus"
+environment = "staging"
+debug = false
+host = "0.0.0.0"
+port = 8000
+
+# ----------------------------------------------------------------------------
+# Database Configuration
+# ----------------------------------------------------------------------------
+
+[database]
+host = "localhost"
+port = 5432
+name = "albus_staging"
+driver = "postgresql+asyncpg"
+
+# ----------------------------------------------------------------------------
+# Logging Configuration
+# ----------------------------------------------------------------------------
+
+[logging]
+level = "WARNING"
+console_enabled = true
+file_enabled = true
+directory = "logs"
+filename = "albus-staging.log"
+rotation = "midnight"
+retention_days = 30
+compression = true
+format = "production"

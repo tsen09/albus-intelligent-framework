@@ -1,0 +1,39 @@
+# ============================================================================
+# Albus - Testing Configuration
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Application Configuration
+# ----------------------------------------------------------------------------
+
+[application]
+name = "Albus"
+environment = "testing"
+debug = true
+host = "127.0.0.1"
+port = 8001
+
+# ----------------------------------------------------------------------------
+# Database Configuration
+# ----------------------------------------------------------------------------
+
+[database]
+host = "localhost"
+port = 5432
+name = "albus_test"
+driver = "postgresql+asyncpg"
+
+# ----------------------------------------------------------------------------
+# Logging Configuration
+# ----------------------------------------------------------------------------
+
+[logging]
+level = "WARNING"
+console_enabled = true
+file_enabled = false
+directory = "logs"
+filename = "albus-test.log"
+rotation = "midnight"
+retention_days = 3
+compression = false
+format = "simple"

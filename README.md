@@ -114,6 +114,4 @@ Built with a vision to establish a shared foundation for the next generation of 
 
 Albus is distributed under the [MIT License](LICENSE).
 
-This project is based on a fork of [fastapi-langgraph-agent-production-ready-template](https://github.com/wassim249/fastapi-langgraph-agent-production-ready-template), which is also licensed under the MIT License. The original license and copyright notices are retained in accordance with its terms.
-
 ---
