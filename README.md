@@ -87,6 +87,153 @@ Albus is built around the following principles to establish a reliable, reusable
 
 ---
 
+## ⚙️ Setup & Usage
+
+Follow these steps to clone, set up, and install Albus locally.
+
+### Prerequisites
+
+- **Git** – Required to clone the repository.
+- **curl** – Required by the setup script to install [uv](https://docs.astral.sh/uv/) automatically if it is not already available.
+
+**Note:** Python 3.13+ and `uv` do not need to be installed beforehand. Albus's setup script handles their installation automatically.
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/tsen09/albus-intelligent-framework.git
+cd albus-intelligent-framework
+```
+
+### 2. Set Up Albus
+
+Run the setup command to create the Python virtual environment and install the required dependencies using `uv`.
+
+```bash
+./albus.sh setup
+```
+
+Alternatively, use the shorthand:
+
+```bash
+./albus.sh -s
+```
+
+### 3. Configure the Environment
+
+Before developing or testing Albus, configure the environment variables.
+
+Create a `.env` file in the project root using the provided example:
+
+```bash
+cp .env.example .env
+```
+
+Set the appropriate environment in `.env`:
+
+```dotenv
+ENV="development"
+```
+
+Albus automatically loads the corresponding TOML configuration file from `backend/config/`:
+
+| Environment | Configuration file |
+|---|---|
+| Development | `backend/config/development.toml` |
+| Testing | `backend/config/testing.toml` |
+| Staging | `backend/config/staging.toml` |
+| Production | `backend/config/production.toml` |
+
+Update the selected TOML file with the appropriate application, database, and Python runtime settings.
+
+### 4. Install Albus as a Package
+
+To make Albus available for import within your local Python environment, install it in editable mode:
+
+```bash
+uv pip install -e .
+```
+
+Editable installation allows changes to the Albus source code to be reflected without reinstalling the package.
+
+This is particularly useful when developing Albus alongside other intelligent assistant projects that consume it as a dependency.
+
+### 5. Verify the Installation
+
+Verify that Albus is installed in the active Python environment:
+
+```bash
+uv pip show albus
+```
+
+You can also verify that Python can locate the installed package:
+
+```bash
+uv run python -c "import albus; print('Albus installed successfully.')"
+```
+
+**Note:** The import statement assumes the package exposes `albus` as its Python import namespace.
+
+### 6. Integrate Albus into Other Projects
+
+Once installed, Albus can be used as a shared backend dependency across compatible Python projects.
+
+For local development, install it directly from its repository:
+
+```bash
+uv pip install -e /path/to/albus
+```
+
+Alternatively, add Albus as a Git dependency in another project's `pyproject.toml`:
+
+```toml
+[project]
+dependencies = [
+    "albus @ git+https://github.com/tsen09/albus.git"
+]
+```
+
+This allows consuming applications to reuse Albus's backend infrastructure without duplicating its implementation.
+
+### 7. Uninstall Albus
+
+To remove Albus's local Python environment and generated build/cache artifacts:
+
+```bash
+./albus.sh --remove
+```
+
+Alternatively:
+
+```bash
+./albus.sh -r
+```
+
+Albus will ask for confirmation before proceeding. Enter `y` to confirm or `n` to cancel.
+
+To skip the confirmation prompt:
+
+```bash
+./albus.sh --remove --yes
+```
+
+**Note:** Uninstallation preserves your source code, Git history, documentation, environment configuration, and shared system dependencies. It does not uninstall Python, `uv`, or any system-wide database installations.
+
+### CLI Reference
+
+| Command | Description |
+|---|---|
+| `./albus.sh setup` | Set up the project environment |
+| `./albus.sh -s` | Set up the project environment (shorthand) |
+| `./albus.sh run` | Run the configured development application, if applicable |
+| `./albus.sh --remove` | Uninstall Albus's local environment and generated artifacts |
+| `./albus.sh -r` | Uninstall Albus (shorthand) |
+| `./albus.sh --remove --yes` | Uninstall Albus without confirmation |
+| `./albus.sh --version` | Display the project version |
+| `./albus.sh --help` | Display available commands |
+
+---
+
 ## Acknowledgements
 
 Albus builds upon the work and contributions of the open-source community.
