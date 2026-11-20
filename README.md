@@ -1,9 +1,13 @@
-# Albus
-
 <div align="center">
-
-<!-- Replace with your Albus banner/logo -->
-<img src="docs/assets/albus-banner.png" alt="Albus" width="800">
+    <picture>
+        <source
+            media="(prefers-color-scheme: dark)"
+            srcset=".github/assets/albus-banner-dark.png">
+        <img
+            src=".github/assets/albus-banner.png"
+            alt="Albus"
+            width="800">
+    </picture>
 
 ### A reusable Python backend foundation for intelligent assistants.
 
