@@ -1,0 +1,39 @@
+# ============================================================================
+# Albus - Development Configuration
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Application Configuration
+# ----------------------------------------------------------------------------
+
+[application]
+name = "Albus"
+environment = "development"
+debug = true
+host = "127.0.0.1"
+port = 8000
+
+# ----------------------------------------------------------------------------
+# Database Configuration
+# ----------------------------------------------------------------------------
+
+[database]
+host = "localhost"
+port = 5432
+name = "albus_dev"
+driver = "postgresql+asyncpg"
+
+# ----------------------------------------------------------------------------
+# Logging Configuration
+# ----------------------------------------------------------------------------
+
+[logging]
+level = "INFO"
+console_enabled = true
+file_enabled = true
+directory = "logs"
+filename = "albus.log"
+rotation = "midnight"
+retention_days = 14
+compression = true
+format = "development"
