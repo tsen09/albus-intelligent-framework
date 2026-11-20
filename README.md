@@ -15,6 +15,17 @@
 
 Albus is a modular Python backend framework designed to provide reusable, production-ready foundations for intelligent assistant applications. From API infrastructure and shared utilities to model integrations, authorization, load balancing, observability, and extensible backend services, Albus brings essential building blocks together into a unified framework—allowing developers to focus on application-specific logic and intelligence rather than infrastructure.
 
+<br/>
+
+**Built with**
+
+[![Python](https://img.shields.io/badge/Python-3.13%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Framework-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-ORM-D71F00?logo=sqlalchemy&logoColor=white)](https://www.sqlalchemy.org/)
+[![Pydantic](https://img.shields.io/badge/Pydantic-Validation-E92063?logo=pydantic&logoColor=white)](https://docs.pydantic.dev/)
+[![LangGraph](https://img.shields.io/badge/LangGraph-Agentic_AI-1C3C3C?logo=langchain&logoColor=white)](https://www.langchain.com/langgraph)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+
 </div>
 
 ---
