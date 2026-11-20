@@ -189,7 +189,7 @@ Alternatively, add Albus as a Git dependency in another project's `pyproject.tom
 ```toml
 [project]
 dependencies = [
-    "albus @ git+https://github.com/tsen09/albus.git"
+    "albus @ git+https://github.com/tsen09/albus-intelligent-framework.git"
 ]
 ```
 
