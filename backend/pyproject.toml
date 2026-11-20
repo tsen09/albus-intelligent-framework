@@ -9,7 +9,7 @@
 
 [project]
 name = "albus"
-version = "0.1.0"
+version = "0.2.0"
 description = "A modular Python backend framework providing reusable, production-ready infrastructure for intelligent assistant and agent applications."
 readme = "README.md"
 requires-python = ">=3.13"
@@ -467,6 +467,6 @@ package = false
 
 [project.urls]
 
-Homepage = "https://github.com/tsen09/albus"
-Repository = "https://github.com/tsen09/albus"
-Issues = "https://github.com/tsen09/albus/issues"
+Homepage = "https://github.com/tsen09/albus-intelligent-framework"
+Repository = "https://github.com/tsen09/albus-intelligent-framework.git"
+Issues = "https://github.com/tsen09/albus-intelligent-framework/issues"
