@@ -1,0 +1,100 @@
+# ============================================================================
+# Albus Shared Module
+# ============================================================================
+
+[build-system]
+requires = [
+    "setuptools>=77",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+
+# ============================================================================
+# Project Metadata
+# ============================================================================
+
+[project]
+name = "albus-shared"
+version = "0.1.0"
+description = "Shared infrastructure, utilities, and core components for the Albus Framework."
+readme = "README.md"
+requires-python = ">=3.13"
+license = "MIT"
+
+authors = [
+    { name = "Tanmoy Sen", email = "sentanmoy09@gmail.com" },
+]
+
+keywords = [
+    "albus",
+    "framework",
+    "shared",
+    "core",
+    "utilities",
+    "configuration",
+    "logging",
+    "structured-logging",
+    "database",
+    "exceptions",
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
+
+# ============================================================================
+# Runtime Dependencies
+# ============================================================================
+
+dependencies = [
+    # Configuration
+    "python-dotenv>=1.0.0",
+
+    # Logging
+    "structlog>=25.0.0",
+
+    # Database
+    "sqlalchemy>=2.0",
+    "psycopg2-binary>=2.9",
+
+    # Validation and Settings
+    "pydantic>=2.0,<3.0",
+]
+
+
+# ============================================================================
+# Optional Dependencies
+# ============================================================================
+
+[project.optional-dependencies]
+
+dev = [
+    # Testing
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+
+    # Code Quality
+    "ruff>=0.10.0",
+    "mypy>=1.13.0",
+]
+
+
+# ============================================================================
+# Package Discovery
+# ============================================================================
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = [
+    "albus.shared",
+    "albus.shared.*",
+]
+namespaces = true
