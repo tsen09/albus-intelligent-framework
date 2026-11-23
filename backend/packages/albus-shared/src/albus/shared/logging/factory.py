@@ -1,21 +1,18 @@
-
-"""Logger factory for Albus."""
-
+"""Logger retrieval and dependency-injected logger factory."""
 from __future__ import annotations
-
 import structlog
+from .config import LoggingConfig
 
 
-def get_logger(name: str | None = None) -> structlog.stdlib.BoundLogger:
-    """
-    Return a structured logger.
+def create_logger(name: str, config: LoggingConfig):
+    """Return a Structlog logger; setup_logging(config) must run first."""
+    if not isinstance(config, LoggingConfig):
+        raise TypeError("config must be a LoggingConfig instance")
+    if not name.strip():
+        raise ValueError("logger name cannot be empty")
+    return structlog.get_logger(name)
 
-    Args:
-        name:
-            Logger name, normally __name__.
 
-    Returns:
-        A structured logger compatible with Python logging.
-    """
-
+def get_logger(name: str | None = None):
+    """Retrieve a Structlog logger after application startup configuration."""
     return structlog.get_logger(name)

@@ -9,6 +9,8 @@ import logging.handlers
 import re
 import shutil
 import threading
+import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +30,7 @@ class GzipTimedRotatingFileHandler(
         **kwargs: Any,
     ) -> None:
         self.compression = compression
+        self.retention_days = int(kwargs.pop("retention_days", 14))
 
         if compression:
             self.namer = self._namer
@@ -50,30 +53,29 @@ class GzipTimedRotatingFileHandler(
         Path(source).unlink(missing_ok=True)
 
     def getFilesToDelete(self) -> list[str]:
-        """Identify expired rotated files."""
-
-        if not self.compression:
-            return super().getFilesToDelete()
-
-        if self.backupCount <= 0:
-            return []
-
-        base_path = Path(self.baseFilename)
-        prefix = f"{base_path.name}."
-
-        pattern = re.compile(
-            rf"^{re.escape(prefix)}"
-            r"\d{4}-\d{2}-\d{2}"
-            r"(?:_\d{2}-\d{2}-\d{2})?\.gz$"
-        )
-
-        candidates = sorted(
-            str(path)
-            for path in base_path.parent.iterdir()
-            if path.is_file() and pattern.match(path.name)
-        )
-
-        return candidates[:-self.backupCount]
+        """Delete rotated files older than the configured calendar-day window."""
+        if self.retention_days == 0:
+            return []  # Explicitly retain indefinitely.
+        base = Path(self.baseFilename)
+        prefix = base.name + "."
+        expired: list[str] = []
+        cutoff = datetime.now(timezone.utc) - timedelta(days=self.retention_days)
+        for path in base.parent.iterdir():
+            if not path.is_file() or not path.name.startswith(prefix):
+                continue
+            suffix = path.name[len(prefix):]
+            if suffix.endswith(".gz"):
+                suffix = suffix[:-3]
+            # Only consider names created by the configured timed rotator.
+            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}(?:_\d{2}-\d{2}-\d{2})?", suffix):
+                continue
+            try:
+                timestamp = datetime.strptime(suffix, "%Y-%m-%d_%H-%M-%S" if "_" in suffix else "%Y-%m-%d").replace(tzinfo=timezone.utc)
+            except ValueError:
+                continue
+            if timestamp < cutoff:
+                expired.append(str(path))
+        return expired
 
 
 class ModuleFileRouter(logging.Handler):
@@ -94,7 +96,7 @@ class ModuleFileRouter(logging.Handler):
             GzipTimedRotatingFileHandler,
         ] = {}
 
-        self._lock = threading.RLock()
+        self._router_lock = threading.RLock()
 
         self.config.log_dir.mkdir(
             parents=True,
@@ -130,7 +132,7 @@ class ModuleFileRouter(logging.Handler):
 
         module_name = self._resolve_module_name(logger_name)
 
-        with self._lock:
+        with self._router_lock:
             if module_name not in self._handlers:
 
                 filename = (
@@ -142,7 +144,8 @@ class ModuleFileRouter(logging.Handler):
                     str(filename),
                     when=self.config.rotation_when,
                     interval=self.config.rotation_interval,
-                    backupCount=self.config.retention_days,
+                    backupCount=1 if self.config.retention_days else 0,
+                    retention_days=self.config.retention_days,
                     encoding="utf-8",
                     delay=True,
                     utc=True,
@@ -169,7 +172,7 @@ class ModuleFileRouter(logging.Handler):
     def close(self) -> None:
         """Close all managed file handlers."""
 
-        with self._lock:
+        with self._router_lock:
             for handler in self._handlers.values():
                 handler.close()
 

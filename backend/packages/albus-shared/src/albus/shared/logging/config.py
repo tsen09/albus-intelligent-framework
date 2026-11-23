@@ -1,137 +1,55 @@
-
-"""Centralized configuration for Albus logging."""
-
+"""Validated environment-driven configuration for Albus logging."""
 from __future__ import annotations
-
-import os
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Self
+from pydantic import Field, field_validator, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
+LogLevel = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
 ConsoleFormat = Literal["auto", "console", "json"]
+RotationWhen = Literal["S", "M", "H", "D", "midnight", "W0", "W1", "W2", "W3", "W4", "W5", "W6"]
 
+class LoggingConfig(BaseSettings):
+    """Immutable, validated settings loaded from ALBUS_LOG_* variables."""
+    model_config = SettingsConfigDict(env_prefix="ALBUS_LOG_", case_sensitive=False, extra="ignore", frozen=True)
 
-def _get_bool(name: str, default: bool) -> bool:
-    """Read a boolean environment variable."""
-    value = os.getenv(name)
-
-    if value is None:
-        return default
-
-    normalized = value.strip().lower()
-
-    if normalized in {"true", "1", "yes", "on"}:
-        return True
-
-    if normalized in {"false", "0", "no", "off"}:
-        return False
-
-    raise ValueError(f"Invalid boolean value for {name}: {value}")
-
-
-@dataclass(frozen=True, slots=True)
-class LoggingConfig:
-    """Configuration for the Albus logging subsystem."""
-
-    log_level: str = "INFO"
-
+    log_level: LogLevel = Field("INFO", validation_alias="ALBUS_LOG_LEVEL")
     console_enabled: bool = True
     console_format: ConsoleFormat = "auto"
-
     file_enabled: bool = True
-    log_dir: Path = Path("logs")
-
-    rotation_when: str = "midnight"
-    rotation_interval: int = 1
-    retention_days: int = 14
-    compression: bool = True
-
+    log_dir: Path = Field(Path("logs"), validation_alias="ALBUS_LOG_DIRECTORY")
     module_namespace: str = "albus"
-
+    rotation_when: RotationWhen = Field("midnight", validation_alias="ALBUS_LOG_ROTATION")
+    rotation_interval: int = Field(1, ge=1)
+    retention_days: int = Field(14, ge=0)
+    compression: bool = True
     redact_sensitive: bool = True
 
-    def __post_init__(self) -> None:
-        """Validate configuration values."""
+    @field_validator("log_level", mode="before")
+    @classmethod
+    def normalize_level(cls, value: object) -> object:
+        return value.strip().upper() if isinstance(value, str) else value
 
-        normalized_level = self.log_level.upper()
+    @field_validator("console_format", mode="before")
+    @classmethod
+    def normalize_format(cls, value: object) -> object:
+        return value.strip().lower() if isinstance(value, str) else value
 
-        if normalized_level not in {
-            "DEBUG",
-            "INFO",
-            "WARNING",
-            "ERROR",
-            "CRITICAL",
-        }:
-            raise ValueError(
-                f"Unsupported logging level: {self.log_level}"
-            )
-
-        if self.console_format not in {
-            "auto",
-            "console",
-            "json",
-        }:
-            raise ValueError(
-                f"Unsupported console format: {self.console_format}"
-            )
-
-        if self.rotation_interval < 1:
-            raise ValueError("rotation_interval must be at least 1")
-
-        if self.retention_days < 0:
-            raise ValueError("retention_days cannot be negative")
-
-        if not self.module_namespace.strip():
+    @field_validator("module_namespace")
+    @classmethod
+    def validate_namespace(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
             raise ValueError("module_namespace cannot be empty")
+        return value
 
-        object.__setattr__(self, "log_level", normalized_level)
-        object.__setattr__(self, "log_dir", Path(self.log_dir))
+    @model_validator(mode="after")
+    def validate_handlers(self) -> Self:
+        if not self.console_enabled and not self.file_enabled:
+            raise ValueError("At least one logging output must be enabled")
+        return self
 
     @classmethod
-    def from_env(cls) -> LoggingConfig:
-        """Build logging configuration from environment variables."""
-
-        return cls(
-            log_level=os.getenv(
-                "ALBUS_LOG_LEVEL",
-                "INFO",
-            ),
-            console_enabled=_get_bool(
-                "ALBUS_LOG_TO_CONSOLE",
-                True,
-            ),
-            console_format=os.getenv(
-                "ALBUS_LOG_FORMAT",
-                "auto",
-            ).lower(),
-            file_enabled=_get_bool(
-                "ALBUS_LOG_TO_FILE",
-                True,
-            ),
-            log_dir=Path(
-                os.getenv("ALBUS_LOG_DIR", "logs")
-            ),
-            rotation_when=os.getenv(
-                "ALBUS_LOG_ROTATION",
-                "midnight",
-            ),
-            rotation_interval=int(
-                os.getenv("ALBUS_LOG_ROTATION_INTERVAL", "1")
-            ),
-            retention_days=int(
-                os.getenv("ALBUS_LOG_RETENTION_DAYS", "14")
-            ),
-            compression=_get_bool(
-                "ALBUS_LOG_COMPRESSION",
-                True,
-            ),
-            module_namespace=os.getenv(
-                "ALBUS_LOG_NAMESPACE",
-                "albus",
-            ),
-            redact_sensitive=_get_bool(
-                "ALBUS_LOG_REDACT_SENSITIVE",
-                True,
-            ),
-        )
+    def from_env(cls) -> Self:
+        """Compatibility factory for existing callers."""
+        return cls()

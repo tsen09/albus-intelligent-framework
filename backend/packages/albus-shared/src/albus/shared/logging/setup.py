@@ -101,14 +101,17 @@ def setup_logging(
             Environment configuration is used by default.
     """
 
-    config = config or LoggingConfig.from_env()
+    config = config if config is not None else LoggingConfig.from_env()
+    if not isinstance(config, LoggingConfig):
+        raise TypeError("config must be a LoggingConfig instance")
 
     root_logger = logging.getLogger()
 
-    # Remove previously configured root handlers.
+    # Remove only handlers owned by this subsystem.
     for handler in root_logger.handlers[:]:
-        root_logger.removeHandler(handler)
-        handler.close()
+        if getattr(handler, "_albus_owned", False):
+            root_logger.removeHandler(handler)
+            handler.close()
 
     root_logger.setLevel(config.log_level)
 
@@ -128,6 +131,7 @@ def setup_logging(
         console_handler.setLevel(logging.NOTSET)
         console_handler.setFormatter(console_formatter)
 
+        console_handler._albus_owned = True
         root_logger.addHandler(console_handler)
 
     # Configure module-specific file logging.
@@ -143,6 +147,7 @@ def setup_logging(
         )
 
         file_handler.setLevel(logging.NOTSET)
+        file_handler._albus_owned = True
         root_logger.addHandler(file_handler)
 
     # Configure third-party logger levels.
