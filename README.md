@@ -71,6 +71,19 @@ Albus is built around **reusability, modularity, extensibility, maintainability,
 
 ---
 
+## 📚 Documentation
+
+Project documentation, planning, and architectural references are available in the [`.docs/`](.docs/) directory.
+
+| Document | Description |
+|----------|-------------|
+| 📘 [Project Vision](.docs/project-vision.md) | Defines Albus's vision, core principles, architectural boundaries, technology stack, and development direction. |
+| 🗺️ [Development Roadmap](.docs/development-roadmap.md) | Outlines the development plan, milestones, planned features, and progression from `v0.1.0` to `v1.0.0` MVP. |
+| 📄 [Executive Summary](.docs/albus-executive-summary.pdf) | Provides a concise overview of Albus, its objectives, architecture, capabilities, and development goals. |
+| 📐 [Project Blueprint](.docs/albus-blueprint.pdf) | Contains the detailed technical blueprint, concept, structure, and implementation direction. |
+
+---
+
 ## Design Principles
 
 Albus is built around the following principles to establish a reliable, reusable, and extensible backend foundation for intelligent assistants:
