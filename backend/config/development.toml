@@ -29,11 +29,21 @@ driver = "postgresql+asyncpg"
 
 [logging]
 level = "INFO"
+
+# Console Logging
 console_enabled = true
+console_format = "auto" # auto, console, json
+
+# File Logging
 file_enabled = true
 directory = "logs"
-filename = "albus.log"
+module_namespace = "albus"
+
+# Log Rotation
 rotation = "midnight"
+rotation_interval = 1
 retention_days = 14
 compression = true
-format = "development"
+
+# Security
+redact_sensitive = true
