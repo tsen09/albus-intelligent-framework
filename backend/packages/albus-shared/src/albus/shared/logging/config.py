@@ -11,7 +11,14 @@ RotationWhen = Literal["S", "M", "H", "D", "midnight", "W0", "W1", "W2", "W3", "
 
 class LoggingConfig(BaseSettings):
     """Immutable, validated settings loaded from ALBUS_LOG_* variables."""
-    model_config = SettingsConfigDict(env_prefix="ALBUS_LOG_", case_sensitive=False, extra="ignore", frozen=True)
+    model_config = SettingsConfigDict(
+        env_prefix="ALBUS_LOG_",
+        case_sensitive=False,
+        extra="ignore",
+        frozen=True,
+        validate_by_name=True,
+        validate_by_alias=True,
+    )
 
     log_level: LogLevel = Field("INFO", validation_alias="ALBUS_LOG_LEVEL")
     console_enabled: bool = True
